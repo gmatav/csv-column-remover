@@ -40,16 +40,20 @@
 
     <script>
         function processCSV() {
-            const input = document.getElementById('inputBox').value.trim();
-            const lines = input.split('\n');
-            const output = lines.map(line => {
-                const parts = line.split(',');
-                if (parts.length > 2) {
-                    return parts[0] + ',' + parts.slice(2).join(',');
-                }
-                return line; // Leave lines with fewer than 3 parts untouched
-            }).join('\n');
-            document.getElementById('outputBox').value = output;
+           const input = document.getElementById('inputBox').value.trim();
+           fetch('/process', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ csv: input })
+           })
+           .then(res => res.json())
+           .then(data => {
+             document.getElementById('outputBox').value = data.output;
+           })
+           .catch(err => {
+             alert('Error processing CSV');
+             console.error(err);
+           });
         }
     </script>
 </body>
